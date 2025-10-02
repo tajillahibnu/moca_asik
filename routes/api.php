@@ -3,9 +3,12 @@
 use App\Http\Controllers\API\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+
+
+Route::get('/userx', function () {
+    return [1, 2, 3];
+});
 
 // Sanctum route for SPA authentication (optional, for CSRF cookie)
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->name('sanctum.csrf-cookie');

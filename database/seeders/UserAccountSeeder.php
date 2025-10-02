@@ -17,7 +17,7 @@ class UserAccountSeeder extends Seeder
         User::factory(8)->create();
 
         $adminUser = User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Admin Demo',
             "email" => "admin@demo.com",
             "password" => "password123"
         ]);
@@ -25,7 +25,7 @@ class UserAccountSeeder extends Seeder
         $adminUser->assignRole($adminRole);
 
         $regularUser = User::factory()->create([
-            'name' => 'Regular User',
+            'name' => 'User Demo',
             "email" => "user@demo.com",
             "password" => "password123"
         ]);
