@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/matapelajaran",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Matapelajaran\\": "app/",
+            "Modules\\Matapelajaran\\Database\\Factories\\": "database/factories/",
+            "Modules\\Matapelajaran\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Matapelajaran\\Tests\\": "tests/"
+        }
+    }
+}

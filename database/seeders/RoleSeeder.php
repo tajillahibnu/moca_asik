@@ -17,6 +17,13 @@ class RoleSeeder extends Seeder
         $adminRole = $this->createRole('admin', 'Administrator with full access');
         $userRole = $this->createRole('user', 'User with basic access');
 
+        // Tambahan role sesuai permintaan
+        $siswaRole = $this->createRole('siswa', 'Siswa');
+        $guruRole = $this->createRole('guru', 'Guru');
+        $walikelasRole = $this->createRole('walikelas', 'Wali Kelas');
+        $kesiswaanRole = $this->createRole('kesiswaan', 'Kesiswaan');
+        $guruPendampingPklRole = $this->createRole('guru_pendamping_pkl', 'Guru Pendamping PKL');
+
         // Superadmin: all permissions
         $this->assignAllPermissions($superAdminRole);
 
@@ -25,6 +32,21 @@ class RoleSeeder extends Seeder
 
         // User: only users.* (tanpa view users)
         $this->assignUserPermissions($userRole);
+
+        // Siswa, Guru, Wali Kelas, Kesiswaan, Guru Pendamping PKL: 
+        // Untuk sekarang, tidak diberikan permission khusus, 
+        // bisa diatur sesuai kebutuhan di masa depan.
+        // Contoh: $this->assignSiswaPermissions($siswaRole);
+        //         $this->assignGuruPermissions($guruRole);
+        //         dst.
+
+        // Tambahan: assignAllPermissions untuk role lain jika diperlukan
+        // Contoh penggunaan:
+        // $this->assignAllPermissions($guruRole);
+        // $this->assignAllPermissions($walikelasRole);
+        // $this->assignAllPermissions($kesiswaanRole);
+        // $this->assignAllPermissions($guruPendampingPklRole);
+        $this->assignSiswaPermissions($siswaRole);
     }
 
     /**
@@ -78,4 +100,21 @@ class RoleSeeder extends Seeder
 
         $role->syncPermissions($permissions);
     }
+
+    /**
+     * Assign only users.* (tanpa view users) to user.
+     */
+    protected function assignSiswaPermissions(Role $role)
+    {
+        // Ambil semua permission users.* kecuali user.view
+        $permissions = Permission::where(function ($query) {
+            $query->where('name', 'like', 'siswa.%')
+                  ->where('name', '!=', 'user.view');
+        })->get();
+
+        $role->syncPermissions($permissions);
+    }
+
+    // Jika ingin menambah permission khusus untuk role baru, 
+    // bisa tambahkan method assignSiswaPermissions, assignGuruPermissions, dst di sini.
 }

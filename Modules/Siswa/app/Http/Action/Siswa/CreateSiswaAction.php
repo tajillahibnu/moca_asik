@@ -27,6 +27,9 @@ class CreateSiswaAction
                 'source' => 'siswa',
                 'source_id' => null, // akan diupdate setelah siswa dibuat
             ]);
+            if (isset($data['password'])) {
+                unset($data['password']);
+            }
 
             // Buat siswa baru
             $siswaData = $data;

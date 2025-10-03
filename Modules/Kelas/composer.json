@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/kelas",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Kelas\\": "app/",
+            "Modules\\Kelas\\Database\\Factories\\": "database/factories/",
+            "Modules\\Kelas\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Kelas\\Tests\\": "tests/"
+        }
+    }
+}

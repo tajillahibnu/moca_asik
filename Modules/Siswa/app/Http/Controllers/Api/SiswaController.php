@@ -97,10 +97,6 @@ class SiswaController extends Controller
 
     /**
      * Menghapus banyak siswa sekaligus beserta user terkait.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Modules\Siswa\Http\Action\Siswa\DeleteSiswaAction $deleteSiswaAction
-     * @return \Illuminate\Http\JsonResponse
      */
     public function massDestroy(Request $request, DeleteSiswaAction $deleteSiswaAction)
     {

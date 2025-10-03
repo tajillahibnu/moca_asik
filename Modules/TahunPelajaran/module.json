@@ -1,0 +1,11 @@
+{
+    "name": "TahunPelajaran",
+    "alias": "tahunpelajaran",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\TahunPelajaran\\Providers\\TahunPelajaranServiceProvider"
+    ],
+    "files": []
+}

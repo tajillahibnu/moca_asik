@@ -17,3 +17,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/mass-destroy', 'massDestroy')->name('massDestroy'); // Hapus massal
         });
 });
+

@@ -1,3 +1,10 @@
 {
-    "Siswa": true
+    "Siswa": true,
+    "Guru": true,
+    "Karyawan": true,
+    "TahunPelajaran": true,
+    "Matapelajaran": true,
+    "Kelas": true,
+    "KompetansiKeahlian": true,
+    "PKL": true
 }

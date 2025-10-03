@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/tahunpelajaran",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\TahunPelajaran\\": "app/",
+            "Modules\\TahunPelajaran\\Database\\Factories\\": "database/factories/",
+            "Modules\\TahunPelajaran\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\TahunPelajaran\\Tests\\": "tests/"
+        }
+    }
+}

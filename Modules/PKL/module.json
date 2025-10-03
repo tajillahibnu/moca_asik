@@ -1,0 +1,11 @@
+{
+    "name": "PKL",
+    "alias": "pkl",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\PKL\\Providers\\PKLServiceProvider"
+    ],
+    "files": []
+}

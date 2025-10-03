@@ -1,0 +1,11 @@
+{
+    "name": "Karyawan",
+    "alias": "karyawan",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Karyawan\\Providers\\KaryawanServiceProvider"
+    ],
+    "files": []
+}

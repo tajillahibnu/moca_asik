@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/siswa",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Siswa\\": "app/",
+            "Modules\\Siswa\\Database\\Factories\\": "database/factories/",
+            "Modules\\Siswa\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Siswa\\Tests\\": "tests/"
+        }
+    }
+}
