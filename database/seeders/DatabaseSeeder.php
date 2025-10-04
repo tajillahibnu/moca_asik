@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             GuruSeeder::class,
             KaryawanSeeder::class,
             KompetensiKeahlianSeeder::class,
+            MapelSeeder::class,
+            TahunPelajaranSeeder::class
         ]);
     }
 }
