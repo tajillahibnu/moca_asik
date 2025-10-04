@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/kompetensikeahlian",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\KompetensiKeahlian\\": "app/",
+            "Modules\\KompetensiKeahlian\\Database\\Factories\\": "database/factories/",
+            "Modules\\KompetensiKeahlian\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\KompetensiKeahlian\\Tests\\": "tests/"
+        }
+    }
+}

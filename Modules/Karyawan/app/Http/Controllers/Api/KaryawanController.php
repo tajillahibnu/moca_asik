@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Guru\Http\Controllers\Api;
+namespace Modules\Karyawan\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\UserManagement\CreateUserWithSourceService;
@@ -8,17 +8,18 @@ use App\Services\UserManagement\UpdateUserWithSourceService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Modules\Guru\Http\Action\DeleteGuruAction;
-use Modules\Guru\Http\Action\ListGuruAction;
-use Modules\Guru\Models\Guru;
+use Modules\Karyawan\Models\Karyawan;
+use Modules\Karyawan\Http\Action\DeleteKaryawanAction;
+use Modules\Karyawan\Http\Action\ListKaryawanAction;
 
-class GuruController extends Controller
+class KaryawanController extends Controller
 {
     use ApiResponseTrait;
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, ListGuruAction $action)
+    public function index(Request $request, ListKaryawanAction $action)
     {
         try {
             $params = [
@@ -26,12 +27,12 @@ class GuruController extends Controller
                 'per_page' => $request->query('per_page'),
             ];
 
-            $gurus = $action($params);
+            $karyawans = $action($params);
 
             return $this
-                ->apiResponse($gurus)
-                ->setMessage('Daftar guru berhasil diambil')
-                ->addPaginationMeta($gurus)
+                ->apiResponse($karyawans)
+                ->setMessage('Daftar karyawan berhasil diambil')
+                ->addPaginationMeta($karyawans)
                 ->send();
         } catch (\Exception $e) {
             return $this->handleException($e);
@@ -41,40 +42,36 @@ class GuruController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request,CreateUserWithSourceService $service)
+    public function store(Request $request, CreateUserWithSourceService $service)
     {
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'nip' => 'nullable|string|max:255|unique:gurus,nip',
-                'nuptk' => 'nullable|string|max:255|unique:gurus,nuptk',
-                'email' => 'required|email|unique:users,email|unique:gurus,email',
+                'nip' => 'nullable|string|max:255|unique:karyawans,nip',
+                'email' => 'required|email|unique:users,email|unique:karyawans,email',
                 'no_hp' => 'nullable|string|max:20',
                 'jenis_kelamin' => 'nullable|string|max:10',
                 'tempat_lahir' => 'nullable|string|max:255',
                 'tanggal_lahir' => 'nullable|date',
                 'alamat' => 'nullable|string|max:255',
-                'foto' => 'nullable|string|max:255',
                 'jabatan' => 'nullable|string|max:255',
                 'is_aktif' => 'nullable|boolean',
-                // 'password' => 'required|string|min:6|confirmed',
                 'password' => 'required|string',
             ]);
 
-            // Tambahkan created_by jika user login
             $validated['created_by'] = Auth::id();
 
-            $guru = $service('guru', \Modules\Guru\Models\Guru::class, $validated);
-            $guru->load('user');
+            $karyawan = $service('karyawan', Karyawan::class, $validated);
+            $karyawan->load('user');
 
-            // Assign role guru ke user jika ada spatie/permission
+            // Assign role karyawan ke user jika ada spatie/permission
             if (class_exists(\Spatie\Permission\Models\Role::class)) {
-                $guru->user->assignRole('guru');
+                $karyawan->user->assignRole('karyawan');
             }
 
             return $this
-                ->apiResponse($guru)
-                ->setMessage('Guru berhasil ditambahkan')
+                ->apiResponse($karyawan)
+                ->setMessage('Karyawan berhasil ditambahkan')
                 ->setStatusCode(201)
                 ->send();
         } catch (\Exception $e) {
@@ -88,10 +85,10 @@ class GuruController extends Controller
     public function show(int $id)
     {
         try {
-            $siswa = Guru::with('user')->findOrFail($id);
+            $karyawan = Karyawan::with('user')->findOrFail($id);
             return $this
-                ->apiResponse($siswa)
-                ->setMessage('Siswa berhasil ditemukan')
+                ->apiResponse($karyawan)
+                ->setMessage('Karyawan berhasil ditemukan')
                 ->setStatusCode(201)
                 ->send();
         } catch (\Throwable $th) {
@@ -104,49 +101,47 @@ class GuruController extends Controller
      */
     public function update(Request $request, $id, UpdateUserWithSourceService $service)
     {
-        // Ambil guru untuk validasi unique
-        $guru = \Modules\Guru\Models\Guru::findOrFail($id);
+        $karyawan = Karyawan::findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'nip' => 'nullable|string|max:255|unique:gurus,nip,' . $guru->id,
-            'nuptk' => 'nullable|string|max:255|unique:gurus,nuptk,' . $guru->id,
-            'email' => 'sometimes|required|email|unique:gurus,email,' . $guru->id . '|unique:users,email,' . $guru->user_id,
+            'nip' => 'nullable|string|max:255|unique:karyawans,nip,' . $karyawan->id,
+            'email' => 'sometimes|required|email|unique:karyawans,email,' . $karyawan->id . '|unique:users,email,' . $karyawan->user_id,
             'no_hp' => 'nullable|string|max:20',
             'jenis_kelamin' => 'nullable|string|max:10',
             'tempat_lahir' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'alamat' => 'nullable|string|max:255',
-            'foto' => 'nullable|string|max:255',
             'jabatan' => 'nullable|string|max:255',
             'is_aktif' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
         ]);
 
-        // Tambahkan updated_by jika user login
         $validated['updated_by'] = Auth::id();
 
         try {
-            // Jalankan service untuk update guru beserta user
-            $updatedGuru = $service('guru', Guru::class, $id, $validated);
+            $updatedKaryawan = $service('karyawan', Karyawan::class, $id, $validated);
 
             return $this
-                ->apiResponse($updatedGuru->load('user'))
-                ->setMessage('Guru berhasil diupdate')
+                ->apiResponse($updatedKaryawan->load('user'))
+                ->setMessage('Karyawan berhasil diupdate')
                 ->send();
         } catch (\Exception $e) {
             return $this->handleException($e);
         }
     }
 
-    public function destroy(int $id, DeleteGuruAction $deleteGuruAction)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(int $id, DeleteKaryawanAction $deleteKaryawanAction)
     {
         try {
-            $deletedData = $deleteGuruAction($id);
+            $deletedData = $deleteKaryawanAction($id);
 
             return $this
                 ->apiResponse($deletedData)
-                ->setMessage('Guru beserta user terkait berhasil dihapus')
+                ->setMessage('Karyawan beserta user terkait berhasil dihapus')
                 ->setStatusCode(200)
                 ->send();
         } catch (\Throwable $e) {
@@ -155,38 +150,37 @@ class GuruController extends Controller
     }
 
     /**
-     * Menghapus banyak guru sekaligus beserta user terkait.
+     * Menghapus banyak karyawan sekaligus beserta user terkait.
      */
-    public function massDestroy(Request $request, DeleteGuruAction $deleteGuruAction)
+    public function massDestroy(Request $request, DeleteKaryawanAction $deleteKaryawanAction)
     {
         try {
             $validated = $request->validate([
                 'ids' => 'required|array|min:1',
-                'ids.*' => 'integer|exists:gurus,id',
+                'ids.*' => 'integer|exists:karyawans,id',
             ], [
                 'ids.required' => 'Field ids wajib diisi.',
                 'ids.array' => 'Field ids harus berupa array.',
-                'ids.min' => 'Minimal satu guru harus dipilih untuk dihapus.',
-                'ids.*.integer' => 'Setiap id guru harus berupa angka.',
-                'ids.*.exists' => 'Salah satu id guru tidak ditemukan di database.',
+                'ids.min' => 'Minimal satu karyawan harus dipilih untuk dihapus.',
+                'ids.*.integer' => 'Setiap id karyawan harus berupa angka.',
+                'ids.*.exists' => 'Salah satu id karyawan tidak ditemukan di database.',
             ]);
             $ids = $validated['ids'];
 
-            // Cek apakah ada guru yang ditemukan
-            $gurus = Guru::whereIn('id', $ids)->get();
-            if ($gurus->isEmpty()) {
+            $karyawans = Karyawan::whereIn('id', $ids)->get();
+            if ($karyawans->isEmpty()) {
                 return $this
                     ->apiResponse(null)
-                    ->setMessage('Tidak ada data guru yang ditemukan untuk dihapus')
+                    ->setMessage('Tidak ada data karyawan yang ditemukan untuk dihapus')
                     ->setStatusCode(404)
                     ->send();
             }
 
-            $deletedData = $deleteGuruAction($ids);
+            $deletedData = $deleteKaryawanAction($ids);
 
             return $this
                 ->apiResponse($deletedData)
-                ->setMessage('Guru beserta user terkait berhasil dihapus secara massal')
+                ->setMessage('Karyawan beserta user terkait berhasil dihapus secara massal')
                 ->setStatusCode(200)
                 ->send();
         } catch (\Throwable $e) {

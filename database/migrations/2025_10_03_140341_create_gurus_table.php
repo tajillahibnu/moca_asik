@@ -34,6 +34,28 @@ return new class extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
+
+        Schema::create('karyawans', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('nip')->nullable()->unique(); // Nomor Induk Pegawai, opsional
+            $table->string('email')->unique();
+            $table->string('no_hp')->nullable();
+            $table->string('jenis_kelamin', 10)->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->boolean('is_aktif')->default(true);
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+        });
     }
 
     /**
@@ -41,6 +63,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('karyawans');
         Schema::dropIfExists('gurus');
     }
 };

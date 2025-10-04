@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kompetensi_keahlians', function (Blueprint $table) {
+        Schema::create('kompt_ahli', function (Blueprint $table) {
             $table->id();
             $table->uuid('public_url_code')->unique()->comment('Kode unik untuk akses publik URL');
             $table->string('nama'); // Nama kompetensi keahlian/jurusan
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kompetensi_keahlians');
+        Schema::dropIfExists('kompt_ahli');
     }
 };

@@ -5,6 +5,6 @@
     "TahunPelajaran": true,
     "Matapelajaran": true,
     "Kelas": true,
-    "KompetansiKeahlian": true,
-    "PKL": true
+    "PKL": true,
+    "KompetensiKeahlian": true
 }

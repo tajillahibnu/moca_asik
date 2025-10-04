@@ -1,0 +1,11 @@
+{
+    "name": "KompetensiKeahlian",
+    "alias": "kompetensikeahlian",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\KompetensiKeahlian\\Providers\\KompetensiKeahlianServiceProvider"
+    ],
+    "files": []
+}
