@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Guru\Models\Guru;
 use Modules\Siswa\Models\Siswa;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -24,8 +25,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'source',
-        'source_id',
     ];
 
     /**
@@ -98,5 +97,13 @@ class User extends Authenticatable
     public function siswa()
     {
         return $this->hasOne(Siswa::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke model Guru.
+     */
+    public function guru()
+    {
+        return $this->hasOne(Guru::class, 'user_id');
     }
 }

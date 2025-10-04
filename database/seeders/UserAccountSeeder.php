@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Modules\Siswa\Http\Action\Siswa\CreateSiswaAction;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserAccountSeeder extends Seeder
 {
@@ -15,40 +14,56 @@ class UserAccountSeeder extends Seeder
      */
     public function run(): void
     {
+        // Buat 8 user random (tanpa role khusus)
         User::factory(8)->create();
 
+        // Buat admin
+        $adminRole = $this->getOrCreateRole('admin', 'Administrator');
         $adminUser = User::factory()->create([
             'name' => 'Admin Demo',
-            "email" => "admin@demo.com",
-            "password" => "password123"
+            'email' => 'admin@demo.com',
+            'password' => Hash::make('password123')
         ]);
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $adminUser->assignRole($adminRole);
 
-        $regularUser = User::factory()->create([
-            'name' => 'User Demo',
-            "email" => "user@demo.com",
-            "password" => "password123"
-        ]);
-        $userRole = Role::firstOrCreate(['name' => 'user']);
-        $regularUser->assignRole($userRole);
-        $this->newSiswa();
+        // // Buat user biasa
+        // $userRole = $this->getOrCreateRole('user', 'User Biasa');
+        // $regularUser = User::factory()->create([
+        //     'name' => 'User Demo',
+        //     'email' => 'user@demo.com',
+        //     'password' => Hash::make('password123')
+        // ]);
+        // $regularUser->assignRole($userRole);
+
+        // // Buat karyawan
+        // $this->newKaryawan();
     }
 
-    private function newSiswa()
+    private function newKaryawan()
     {
-        // Buat akun user biasa
-        $userRole = Role::firstOrCreate(['name' => 'siswa']);
+        $karyawanRole = $this->getOrCreateRole('karyawan', 'Karyawan');
 
-        // Buat 8 akun siswa random
-        for ($i = 1; $i <= 8; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $randomData = [
-                'nama_lengkap' => "Siswa Demo $i",
-                'email' => "siswa$i@demo.com",
-                'password' => 'password123',
+                'name' => "Karyawan Demo $i",
+                'email' => "karyawan$i@demo.com",
+                'password' => Hash::make('password123'),
             ];
-            $siswa = app(CreateSiswaAction::class)($randomData);
-            $siswa->user->assignRole($userRole);
+            $karyawan = User::create($randomData);
+            $karyawan->assignRole($karyawanRole);
         }
+    }
+
+    private function getOrCreateRole($name, $description)
+    {
+        return Role::firstOrCreate(
+            [
+                'name' => $name,
+                'guard_name' => 'web'
+            ],
+            [
+                'description' => $description
+            ]
+        );
     }
 }

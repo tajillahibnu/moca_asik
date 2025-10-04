@@ -3,6 +3,8 @@
 namespace Modules\Siswa\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\UserManagement\CreateUserWithSourceService;
+use App\Services\UserManagement\UpdateUserWithSourceService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Modules\Siswa\Http\Action\Siswa\CreateSiswaAction;
@@ -49,11 +51,12 @@ class SiswaController extends Controller
         }
     }
 
-    public function store(Request $request, CreateSiswaAction $action)
+    public function store(Request $request, CreateUserWithSourceService $service)
     {
         try {
-            $siswa = $action($request->all());
-
+            $data = $request->all();
+            $siswa = $service('siswa', Siswa::class, $data);
+            $siswa->load('user');
             return $this
                 ->apiResponse($siswa)
                 ->setMessage('Siswa berhasil ditambahkan')
@@ -64,10 +67,12 @@ class SiswaController extends Controller
         }
     }
 
-    public function update(Request $request, UpdateSiswaAction $action, int $id)
+    public function update(Request $request, UpdateUserWithSourceService $service, int $id)
     {
         try {
-            $siswa = $action($id, $request->all());
+            $data = $request->all();
+            $siswa = $service('siswa', Siswa::class, $id, $data);
+            $siswa->load('user');
 
             return $this
                 ->apiResponse($siswa)
