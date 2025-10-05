@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
             KaryawanSeeder::class,
             KompetensiKeahlianSeeder::class,
             MapelSeeder::class,
-            TahunPelajaranSeeder::class
+            TahunPelajaranSeeder::class,
+            TingkatSeeder::class,
+            KelasSeeder::class,
         ]);
     }
 }

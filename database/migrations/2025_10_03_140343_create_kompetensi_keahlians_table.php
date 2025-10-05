@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kompt_ahli', function (Blueprint $table) {
+        Schema::create('kompt_ahlis', function (Blueprint $table) {
             $table->id();
             $table->uuid('public_url_code')->unique()->comment('Kode unik untuk akses publik URL');
             $table->string('nama'); // Nama kompetensi keahlian/jurusan

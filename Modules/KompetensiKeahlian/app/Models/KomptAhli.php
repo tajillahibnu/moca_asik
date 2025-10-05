@@ -10,7 +10,7 @@ class KomptAhli extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'kompt_ahli';
+    protected $table = 'kompt_ahlis';
 
     protected $fillable = [
         'public_url_code',
