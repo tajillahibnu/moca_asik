@@ -6,5 +6,6 @@
     "Matapelajaran": true,
     "Kelas": true,
     "PKL": true,
-    "KompetensiKeahlian": true
+    "KompetensiKeahlian": true,
+    "Authentication": true
 }

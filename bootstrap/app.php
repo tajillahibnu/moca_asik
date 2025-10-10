@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\HandleCors;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,16 +13,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Sanctum middleware
+        // Register CORS middleware for both web and api routes
+        $middleware->web(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
         $middleware->api(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
         // Custom middleware
         $middleware->alias([
             'auth.sanctum' => \App\Http\Middleware\AuthenticateWithSanctum::class,
-            'permissions.all' => \App\Http\Middleware\EnsureAllPermissions::class, 
-            'permissions.flex' => \App\Http\Middleware\EnsureFlexiblePermissions::class, 
+            'permissions.all' => \App\Http\Middleware\EnsureAllPermissions::class,
+            'permissions.flex' => \App\Http\Middleware\EnsureFlexiblePermissions::class,
             'ability' => \App\Http\Middleware\EnsureTokenAbilities::class,
         ]);
 

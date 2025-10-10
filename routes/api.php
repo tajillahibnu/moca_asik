@@ -11,19 +11,9 @@ Route::get('/userx', function () {
 });
 
 // Sanctum route for SPA authentication (optional, for CSRF cookie)
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->name('sanctum.csrf-cookie');
+// Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])->name('sanctum.csrf-cookie');
 
-Route::prefix('auth')
-    ->name('auth.')
-    ->controller(AuthController::class)
-    ->group(function () {
-        Route::post('/login', 'login')->name('login');
-        Route::post('/register', 'register')->name('register');
-        Route::middleware('auth:sanctum')->group(function () {
-            Route::post('/logout', 'logout')->name('logout');
-            Route::get('/user', 'user')->name('user');
-        });
-    });
+
 
 // Protected user info route (optional, can be removed if /auth/user is used)
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
