@@ -57,9 +57,11 @@ class User extends Authenticatable
         });
     }
 
-    public function createAuthToken(): string
+    public function createAuthToken($browser, $os): string
     {
-        return $this->createToken('auth_token', $this->getAbilities())->plainTextToken;
+        $tokenName = "{$browser} on {$os}";
+        return $this->createToken($tokenName, $this->getAbilities())->plainTextToken;
+        // return $this->createToken('auth_token', $this->getAbilities())->plainTextToken;
     }
 
     public function getAbilities(): array

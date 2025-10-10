@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use hisorange\BrowserDetect\Parser as Browser;
 
 class SignInUserAction
 {
@@ -24,16 +25,16 @@ class SignInUserAction
      */
     public function __invoke(Request $request): array
     {
-        // Validasi input
+        // Validasi input request
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'login_type' => 'nullable|in:single,multi',
-            'max_devices' => 'nullable|integer',
+            'email' => ['required','email'],
+            'password' => ['required'],
+            'login_type' => ['nullable','in:single,multi'],
+            'max_devices' => ['nullable','integer'],
         ]);
 
         $loginType = $credentials['login_type'] ?? 'multi';
-        $maxDevices = isset($credentials['max_devices']) ? (int)$credentials['max_devices'] : 3; // default 3, -1 = unlimited
+        $maxDevices = array_key_exists('max_devices', $credentials) ? (int)$credentials['max_devices'] : 3; // default 3, -1 = unlimited
 
         // Cari user berdasarkan email
         $user = User::where('email', $credentials['email'])->first();
@@ -45,28 +46,46 @@ class SignInUserAction
             ]);
         }
 
+        // Ambil daftar token perangkat aktif: urut terbaru dulu, device metadata sudah di personal_access_tokens
+        $activeDevices = [];
+        if (method_exists($user, 'tokens')) {
+            $tokens = $user->tokens()->latest()->get();
+            foreach ($tokens as $token) {
+                $activeDevices[] = [
+                    'id' => $token->id,
+                    'device_name' => $token->device_name,
+                    'browser' => $token->browser,
+                    'os' => $token->os,
+                    'ip_address' => $token->ip_address,
+                    'last_used_at' => $token->last_used_at,
+                    'created_at' => $token->created_at,
+                ];
+            }
+        }
+
         if ($loginType === 'single') {
-            // Hapus semua token lama milik user (hanya bisa login 1 device saja)
+            // Hanya boleh login di satu device, jika token sudah ada tolak
             if ($user->tokens()->exists()) {
                 throw ValidationException::withMessages([
                     'email' => ['Akun ini sudah login di perangkat lain. Silakan logout dulu.'],
+                    'active_devices' => $activeDevices,
                 ]);
-            }    
-            $token = $user->createAuthToken();
+            }
+            $token = $this->createTokenWithDeviceMeta($user, $request);
         } else {
-            // Multi device mode
+            // Multi-device mode, cek limit device jika > 0 bukan unlimited
             if ($maxDevices > 0 && method_exists($user, 'tokens')) {
-                $tokens = $user->tokens()->latest()->get();
-                $currentDevices = $tokens->count();
+                $currentDevices = $user->tokens()->count();
                 if ($currentDevices >= $maxDevices) {
                     throw ValidationException::withMessages([
                         'email' => [
                             "Maksimal perangkat login tercapai ({$maxDevices} device). Saat ini sudah login di {$currentDevices} perangkat. Silakan logout dari perangkat lain terlebih dahulu."
                         ],
+                        'active_devices' => $activeDevices,
                     ]);
                 }
             }
-            $token = $user->createAuthToken();
+            $token = $this->createTokenWithDeviceMeta($user, $request);
         }
 
         return [
@@ -74,6 +93,38 @@ class SignInUserAction
             'token' => 'Bearer ' . $token,
             'user' => $user->load('roles.permissions'),
             'abilities' => $user->getAbilities(),
+            'active_devices' => $activeDevices,
         ];
+    }
+
+    /**
+     * Membuat personal access token baru beserta metadata device/browser dari request.
+     *
+     * @param \App\Models\User $user
+     * @param \Illuminate\Http\Request $request
+     * @return string $plainToken
+     */
+    public function createTokenWithDeviceMeta(User $user, Request $request): string
+    {
+        $ip = $request->ip();
+        $browser = Browser::browserFamily() ?: 'Unknown Browser';
+        $os = Browser::platformFamily() ?: 'Unknown OS';
+        $deviceName = Browser::deviceFamily() ?: 'Unknown Device';
+
+        // Buat token dengan nama "Browser on OS"
+        $plainToken = $user->createAuthToken($browser, $os);
+
+        // Update entry terakhir (yang baru saja dibuat) pada tokens() dengan metadata device
+        $latestToken = $user->tokens()->latest()->first();
+        if ($latestToken) {
+            $latestToken->forceFill([
+                'device_name' => $deviceName,
+                'browser' => $browser,
+                'os' => $os,
+                'ip_address' => $ip,
+            ])->save();
+        }
+
+        return $plainToken;
     }
 }

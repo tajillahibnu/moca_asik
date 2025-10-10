@@ -19,7 +19,6 @@ class AuthenticationController extends Controller
             // Semua pengaturan login (single/multi device) diatur di backend, tidak dari frontend
             // Selalu gunakan mode multi device dengan maksimal 3 device
             $request->merge([
-                // 'login_type' => 'single',
                 'login_type' => 'multi',
                 'max_devices' => 3, // default 3, -1 = unlimited
             ]);
@@ -29,7 +28,9 @@ class AuthenticationController extends Controller
             return $this->success([
                 'token' => $result['token'],
                 'user' => $result['user'],
-                // 'abilities' => $result['abilities'],
+                // tambahan informasi perangkat & abilities sesuai SignInUserAction
+                'active_devices' => $result['active_devices'] ?? [],
+                'abilities' => $result['abilities'] ?? [],
             ], 'Login berhasil');
         } catch (ValidationException $e) {
             throw $e;
